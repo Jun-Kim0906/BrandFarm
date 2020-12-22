@@ -33,18 +33,29 @@ Future<void> addRestaurant(Restaurant restaurant) {
   });
 }
 
-Stream<QuerySnapshot> loadAllRestaurants() {
-  return FirebaseFirestore.instance
+Future<List<Restaurant>> loadAllRestaurants_bloc() async {
+  List<Restaurant> res = [];
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('restaurants')
       .orderBy('avgRating', descending: true)
       .limit(50)
-      .snapshots();
+      .get();
+  querySnapshot.docs.forEach((element) {
+    res.add(Restaurant.fromSnapshot(element));
+  });
+  return res;
 }
 
-List<Restaurant> getRestaurantsFromQuery(QuerySnapshot snapshot) {
-  return snapshot.docs.map((DocumentSnapshot doc) {
-    return Restaurant.fromSnapshot(doc);
-  }).toList();
+Future<List<Review>> loadCurrentReviews(Restaurant restaurant) async {
+  List<Review> reviews = [];
+  QuerySnapshot querySnapshot = await restaurant.reference
+      .collection('ratings')
+      .orderBy('timestamp', descending: true)
+      .get();
+  querySnapshot.docs.forEach((element) {
+    reviews.add(Review.fromSnapshot(element));
+  });
+  return reviews;
 }
 
 Future<Restaurant> getRestaurant(String restaurantId) {
@@ -85,21 +96,38 @@ Future<void> addReview({String restaurantId, Review review}) {
   });
 }
 
-Stream<QuerySnapshot> loadFilteredRestaurants(Filter filter) {
-  Query collection = FirebaseFirestore.instance.collection('restaurants');
+Future<List<Restaurant>> loadFilteredRestaurants_bloc(Filter filter) async {
+  List<Restaurant> res = [];
+  QuerySnapshot querySnapshot;
   if (filter.category != null) {
-    collection = collection.where('category', isEqualTo: filter.category);
+    querySnapshot = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('category', isEqualTo: filter.category)
+        .orderBy(filter.sort ?? 'avgRating', descending: true)
+        .limit(50)
+        .get();
   }
   if (filter.city != null) {
-    collection = collection.where('city', isEqualTo: filter.city);
+    querySnapshot = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('city', isEqualTo: filter.city)
+        .orderBy(filter.sort ?? 'avgRating', descending: true)
+        .limit(50)
+        .get();
   }
   if (filter.price != null) {
-    collection = collection.where('price', isEqualTo: filter.price);
+    querySnapshot = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('price', isEqualTo: filter.price)
+        .orderBy(filter.sort ?? 'avgRating', descending: true)
+        .limit(50)
+        .get();
   }
-  return collection
-      .orderBy(filter.sort ?? 'avgRating', descending: true)
-      .limit(50)
-      .snapshots();
+
+  querySnapshot.docs.forEach((element) {
+    res.add(Restaurant.fromSnapshot(element));
+  });
+  return res;
 }
 
 void addRestaurantsBatch(List<Restaurant> restaurants) {

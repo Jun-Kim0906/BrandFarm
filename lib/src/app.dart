@@ -13,6 +13,9 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendlyeats/blocs/blocs.dart';
+import 'package:friendlyeats/blocs/restaurant/bloc.dart';
 
 import 'home_page.dart';
 import 'restaurant_page.dart';
@@ -27,9 +30,11 @@ class FriendlyEatsApp extends StatelessWidget {
           case RestaurantPage.route:
             final RestaurantPageArguments arguments = settings.arguments;
             return MaterialPageRoute(
-                builder: (context) => RestaurantPage(
+                builder: (context) => BlocProvider<RestaurantBloc>(
+                    create: (BuildContext context) => RestaurantBloc(),
+                    child: RestaurantPage(
                       restaurantId: arguments.id,
-                    ));
+                    )));
             break;
           default:
             // return MaterialPageRoute(
@@ -37,7 +42,11 @@ class FriendlyEatsApp extends StatelessWidget {
             //           restaurantId: 'lV81npEeboEActMpUJjn',
             //         ));
             // Everything defaults to home, but maybe we want a custom 404 here
-            return MaterialPageRoute(builder: (context) => HomePage());
+            return MaterialPageRoute(
+                builder: (context) => BlocProvider<HomeBloc>(
+                      create: (BuildContext context) => HomeBloc(),
+                      child: HomePage(),
+                    ));
         }
       },
     );

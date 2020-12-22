@@ -33,7 +33,7 @@ class Restaurant {
   final String photo;
   final DocumentReference reference;
 
-  Restaurant._({this.name, this.category, this.city, this.price, this.photo})
+  Restaurant({this.name, this.category, this.city, this.price, this.photo})
       : id = null,
         numRatings = 0,
         avgRating = 0,
@@ -52,7 +52,7 @@ class Restaurant {
         reference = snapshot.reference;
 
   factory Restaurant.random() {
-    return Restaurant._(
+    return Restaurant(
       category: getRandomCategory(),
       city: getRandomCity(),
       name: getRandomName(),
