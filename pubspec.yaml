@@ -22,9 +22,9 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  firebase_core: ^0.5.0
-  firebase_auth: ^0.18.0+1
-  cloud_firestore: ^0.14.0+2
+  firebase_core: ^0.5.3
+  firebase_auth: ^0.18.4+1
+  cloud_firestore: ^0.14.4
   responsive_grid: ^1.2.1+1
   smooth_star_rating: ^1.1.1
   sliver_fab: ^1.0.0
