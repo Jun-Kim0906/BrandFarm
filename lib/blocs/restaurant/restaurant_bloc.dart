@@ -3,8 +3,8 @@
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:friendlyeats/src/model/filter.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:friendlyeats/src/model/filter.dart';
 import 'package:friendlyeats/src/model/restaurant.dart';
 import 'package:friendlyeats/src/model/data.dart' as data;
 import 'package:friendlyeats/src/model/review.dart';
