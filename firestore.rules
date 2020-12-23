@@ -1,5 +1,8 @@
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /User/{UserId} {
+      allow read, write;
+    }
     // Restaurants:
     //   - Authenticated user can read
     //   - Authenticated user can create/update (for demo)
