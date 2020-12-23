@@ -29,6 +29,8 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       yield* _mapSetRestaurantToState(event.res);
     } else if(event is AddRandomReviews) {
       yield* _mapAddRandomReviewsToState();
+    } else if(event is GetRestaurants) {
+      yield* _mapGetRestaurantsToState(event.id);
     }
   }
 
@@ -83,6 +85,20 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       reviews: state.reviews,
         userName: state.userName,
         uid: state.uid,
+    );
+  }
+
+  Stream<RestaurantState> _mapGetRestaurantsToState(String id) async* {
+    Restaurant restaurant;
+
+    restaurant = await data.getRestaurant(id);
+
+    yield state.update(
+        isLoading:state.isLoading,
+        restaurant: restaurant,
+      reviews: state.reviews,
+      userName: state.userName,
+      uid: state.uid,
     );
   }
 

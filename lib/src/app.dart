@@ -17,23 +17,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/blocs.dart';
 import 'package:friendlyeats/blocs/restaurant/bloc.dart';
 
+import 'data_repository/user_repository/user_repository.dart';
 import 'home_page.dart';
 import 'restaurant_page.dart';
 
 class FriendlyEatsApp extends StatelessWidget {
+  final UserRepository _userRepository;
+
+  FriendlyEatsApp({Key key, @required UserRepository userRepository})
+      : assert(userRepository != null),
+        _userRepository = userRepository,
+        super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'FriendlyEats',
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case RestaurantPage.route:
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>   not default   >>>>>>>>>>>>>>>>>>>>>>>>\n");
             final RestaurantPageArguments arguments = settings.arguments;
             return MaterialPageRoute(
                 builder: (context) => BlocProvider<RestaurantBloc>(
                     create: (BuildContext context) => RestaurantBloc(),
                     child: RestaurantPage(
-                      restaurantId: arguments.id,
+                      restaurantId: arguments.id, userRepository: _userRepository
                     )));
             break;
           default:

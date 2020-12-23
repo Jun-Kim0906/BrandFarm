@@ -20,6 +20,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/blocs.dart';
+import 'package:friendlyeats/src/connectivity.dart';
+import 'package:friendlyeats/src/widgets/alert_dialog/alert_dialog.dart';
 
 import 'restaurant_page.dart';
 import 'model/data.dart' as data;
@@ -46,15 +48,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _homeBloc = BlocProvider.of<HomeBloc>(context);
-  }
-
-  _HomePageState() {
-    FirebaseAuth.instance
-        .signInAnonymously()
-        .then((UserCredential userCredential) {
-      _homeBloc.add(LoadAllRestaurants());
-    });
-    return ;
+    _homeBloc.add(LoadAllRestaurants());
   }
 
   List<Restaurant> _currentSubscription = [];
@@ -95,6 +89,23 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               leading: Icon(Icons.restaurant),
               title: Text('FriendlyEats'),
+              actions: [
+                IconButton(
+                    icon: Icon(Icons.wifi, color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ConnectivityPage()),
+                      );
+                    }
+                ),
+                IconButton(
+                    icon: Icon(Icons.logout, color: Colors.white,),
+                    onPressed: (){
+                      showAlertDialog(context);
+                    }
+                ),
+              ],
               bottom: PreferredSize(
                 preferredSize: Size(320, 48),
                 child: Padding(

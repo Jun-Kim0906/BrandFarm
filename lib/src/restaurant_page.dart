@@ -15,17 +15,19 @@
 //import 'dart:async';
 import 'dart:math';
 
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/restaurant/bloc.dart';
+import 'package:friendlyeats/src/model/user_model/user_model.dart';
+import 'package:friendlyeats/src/utils/user_util/user_util.dart';
 import 'package:sliver_fab/sliver_fab.dart';
-
+import 'package:friendlyeats/src/model/user_model/user_model.dart';
+import 'data_repository/user_repository/user_repository.dart';
 import 'widgets/empty_list.dart';
 import 'model/data.dart' as data;
-import 'model/restaurant.dart';
 import 'model/review.dart';
 import 'widgets/app_bar.dart';
 import 'widgets/review.dart';
@@ -35,45 +37,44 @@ class RestaurantPage extends StatefulWidget {
   static const route = '/restaurant';
 
   final String _restaurantId;
+  final UserRepository _userRepository;
 
-  RestaurantPage({Key key, String restaurantId})
+  RestaurantPage({Key key, String restaurantId, @required UserRepository userRepository})
       : _restaurantId = restaurantId,
+        _userRepository = userRepository,
         super(key: key);
 
   @override
   _RestaurantPageState createState() =>
-      _RestaurantPageState(_restaurantId);
+      _RestaurantPageState(_restaurantId, _userRepository);
 }
 
 class _RestaurantPageState extends State<RestaurantPage> {
   RestaurantBloc _resBloc;
   String restaurantId;
+  UserRepository userRepository;
   List<Review> _currentReviewSubscription = [];
+  String uid;
+  String name;
+  String email;
+
+  _RestaurantPageState(this.restaurantId, this.userRepository) ;
 
   @override
   void initState() {
     super.initState();
     _resBloc = BlocProvider.of<RestaurantBloc>(context);
+    _resBloc.add(GetRestaurants(id: restaurantId));
+    getCredentialUserInfo();
   }
 
-  _RestaurantPageState(this.restaurantId) {
-    FirebaseAuth.instance
-        .signInAnonymously()
-        .then((UserCredential userCredential) {
-      data.getRestaurant(restaurantId).then((Restaurant restaurant) {
-        // _currentReviewSubscription?.cancel();
-
-        if (userCredential.user.displayName == null ||
-            userCredential.user.displayName.isEmpty) {
-          _resBloc.add(SetUserName(name: 'Anonymous (${kIsWeb ? "Web" : "Mobile"})'));
-        } else {
-          _resBloc.add(SetUserName(name: userCredential.user.displayName));
-        }
-        _resBloc.add(SetRestaurant(res: restaurant));
-        _resBloc.add(SetUserId(uid: userCredential.user.uid));
-        _resBloc.add(GetReviews());
-      });
-    });
+  void getCredentialUserInfo() async {
+    User currentUser = await UserRepository().getUser();
+    if( currentUser != null) {
+      await _resBloc.add(SetUserName(name: currentUser.displayName));
+      await _resBloc.add(SetUserId(uid: currentUser.uid));
+      await _resBloc.add(GetReviews());
+    }
   }
 
   void _onCreateReviewPressed(BuildContext context, RestaurantState state) async {

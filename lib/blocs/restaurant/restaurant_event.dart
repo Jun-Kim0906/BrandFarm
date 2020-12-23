@@ -39,6 +39,18 @@ class SetUserId extends RestaurantEvent{
 }
 
 class GetReviews extends RestaurantEvent{}
+class GetRestaurants extends RestaurantEvent{
+  final String id;
+
+  const GetRestaurants({@required this.id});
+
+  @override
+  String toString() {
+    return '''GetRestaurants{
+        id: $id,
+        ''';
+  }
+}
 
 class SetRestaurant extends RestaurantEvent{
   final Restaurant res;
