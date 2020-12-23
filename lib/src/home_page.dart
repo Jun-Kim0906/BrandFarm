@@ -18,6 +18,8 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendlyeats/blocs/blocs.dart';
 
 import 'restaurant_page.dart';
 import 'model/data.dart' as data;
@@ -38,97 +40,94 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  HomeBloc _homeBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeBloc = BlocProvider.of<HomeBloc>(context);
+  }
+
   _HomePageState() {
     FirebaseAuth.instance
         .signInAnonymously()
         .then((UserCredential userCredential) {
-      _currentSubscription =
-          data.loadAllRestaurants().listen(_updateRestaurants);
+      _homeBloc.add(LoadAllRestaurants());
     });
+    return ;
   }
 
-  @override
-  void dispose() {
-    _currentSubscription?.cancel();
-    super.dispose();
-  }
-
-  StreamSubscription<QuerySnapshot> _currentSubscription;
-  bool _isLoading = true;
-  List<Restaurant> _restaurants = <Restaurant>[];
-  Filter _filter;
-
-  void _updateRestaurants(QuerySnapshot snapshot) {
-    setState(() {
-      _isLoading = false;
-      _restaurants = data.getRestaurantsFromQuery(snapshot);
-    });
-  }
+  List<Restaurant> _currentSubscription = [];
 
   Future<void> _onAddRandomRestaurantsPressed() async {
     final numReviews = Random().nextInt(10) + 20;
 
     final restaurants = List.generate(numReviews, (_) => Restaurant.random());
     data.addRestaurantsBatch(restaurants);
+    _homeBloc.add(LoadAllRestaurants());
   }
 
-  Future<void> _onFilterBarPressed() async {
+  Future<HomeState> _onFilterBarPressed(HomeState state) async {
     final filter = await showDialog<Filter>(
       context: context,
-      builder: (_) => FilterSelectDialog(filter: _filter),
+      builder: (_) => FilterSelectDialog(filter: state.filter),
     );
     if (filter != null) {
-      await _currentSubscription?.cancel();
-      setState(() {
-        _isLoading = true;
-        _filter = filter;
-        if (filter.isDefault) {
-          _currentSubscription =
-              data.loadAllRestaurants().listen(_updateRestaurants);
-        } else {
-          _currentSubscription =
-              data.loadFilteredRestaurants(filter).listen(_updateRestaurants);
-        }
-      });
+      _homeBloc.add(Loading());
+      _homeBloc.add(SetFilter(filter: filter));
+
+      if (filter.isDefault) {
+        _homeBloc.add(LoadAllRestaurants());
+        _currentSubscription = state.restaurants;
+      } else {
+        _homeBloc.add(LoadFilteredRestaurants());
+        _currentSubscription = state.restaurants;
+      }
     }
+    return state;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Icon(Icons.restaurant),
-        title: Text('FriendlyEats'),
-        bottom: PreferredSize(
-          preferredSize: Size(320, 48),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
-            child: FilterBar(
-              filter: _filter,
-              onPressed: _onFilterBarPressed,
+    return BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          _currentSubscription = state.restaurants;
+          return Scaffold(
+            appBar: AppBar(
+              leading: Icon(Icons.restaurant),
+              title: Text('FriendlyEats'),
+              bottom: PreferredSize(
+                preferredSize: Size(320, 48),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
+                  child: FilterBar(
+                    filter: state.filter,
+                    onPressed: () => _onFilterBarPressed(state),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-      body: Center(
-        child: Container(
-          constraints: BoxConstraints(maxWidth: 1280),
-          child: _isLoading
-              ? CircularProgressIndicator()
-              : _restaurants.isNotEmpty
-                  ? RestaurantGrid(
-                      restaurants: _restaurants,
-                      onRestaurantPressed: (id) {
-                        // TODO: Add deep links on web
-                        Navigator.pushNamed(context, RestaurantPage.route,
-                            arguments: RestaurantPageArguments(id: id));
-                      })
-                  : EmptyListView(
-                      child: Text('FriendlyEats has no restaurants yet!'),
-                      onPressed: _onAddRandomRestaurantsPressed,
-                    ),
-        ),
-      ),
+            body: Center(
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 1280),
+                child: state.isLoading
+                    ? CircularProgressIndicator()
+                    : state.restaurants.isNotEmpty
+                    ? RestaurantGrid(
+                    restaurants: state.restaurants,
+                    onRestaurantPressed: (id) {
+                      // TODO: Add deep links on web
+                      Navigator.pushNamed(context, RestaurantPage.route,
+                          arguments: RestaurantPageArguments(id: id));
+                    })
+                    : EmptyListView(
+                  child: Text('FriendlyEats has no restaurants yet!'),
+                  onPressed: _onAddRandomRestaurantsPressed,
+                ),
+              ),
+            ),
+          );
+        }
     );
   }
 }

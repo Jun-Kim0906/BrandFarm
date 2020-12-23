@@ -19,6 +19,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendlyeats/blocs/restaurant/bloc.dart';
 import 'package:sliver_fab/sliver_fab.dart';
 
 import 'widgets/empty_list.dart';
@@ -34,141 +36,130 @@ class RestaurantPage extends StatefulWidget {
 
   final String _restaurantId;
 
-  RestaurantPage({Key key, @required String restaurantId})
+  RestaurantPage({Key key, String restaurantId})
       : _restaurantId = restaurantId,
         super(key: key);
 
   @override
   _RestaurantPageState createState() =>
-      _RestaurantPageState(restaurantId: _restaurantId);
+      _RestaurantPageState(_restaurantId);
 }
 
 class _RestaurantPageState extends State<RestaurantPage> {
-  _RestaurantPageState({@required String restaurantId}) {
+  RestaurantBloc _resBloc;
+  String restaurantId;
+  List<Review> _currentReviewSubscription = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _resBloc = BlocProvider.of<RestaurantBloc>(context);
+  }
+
+  _RestaurantPageState(this.restaurantId) {
     FirebaseAuth.instance
         .signInAnonymously()
         .then((UserCredential userCredential) {
       data.getRestaurant(restaurantId).then((Restaurant restaurant) {
-        _currentReviewSubscription?.cancel();
-        setState(() {
-          if (userCredential.user.displayName == null ||
-              userCredential.user.displayName.isEmpty) {
-            _userName = 'Anonymous (${kIsWeb ? "Web" : "Mobile"})';
-          } else {
-            _userName = userCredential.user.displayName;
-          }
-          _restaurant = restaurant;
-          _userId = userCredential.user.uid;
+        // _currentReviewSubscription?.cancel();
 
-          // Initialize the reviews snapshot...
-          _currentReviewSubscription = _restaurant.reference
-              .collection('ratings')
-              .orderBy('timestamp', descending: true)
-              .snapshots()
-              .listen((QuerySnapshot reviewSnap) {
-            setState(() {
-              _isLoading = false;
-              _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
-                return Review.fromSnapshot(doc);
-              }).toList();
-            });
-          });
-        });
+        if (userCredential.user.displayName == null ||
+            userCredential.user.displayName.isEmpty) {
+          _resBloc.add(SetUserName(name: 'Anonymous (${kIsWeb ? "Web" : "Mobile"})'));
+        } else {
+          _resBloc.add(SetUserName(name: userCredential.user.displayName));
+        }
+        _resBloc.add(SetRestaurant(res: restaurant));
+        _resBloc.add(SetUserId(uid: userCredential.user.uid));
+        _resBloc.add(GetReviews());
       });
     });
   }
 
-  @override
-  void dispose() {
-    _currentReviewSubscription?.cancel();
-    super.dispose();
-  }
-
-  bool _isLoading = true;
-  StreamSubscription<QuerySnapshot> _currentReviewSubscription;
-
-  Restaurant _restaurant;
-  String _userId;
-  String _userName;
-  List<Review> _reviews = <Review>[];
-
-  void _onCreateReviewPressed(BuildContext context) async {
+  void _onCreateReviewPressed(BuildContext context, RestaurantState state) async {
     final newReview = await showDialog<Review>(
       context: context,
       builder: (_) => ReviewCreateDialog(
-        userId: _userId,
-        userName: _userName,
+        userId: state.uid,
+        userName: state.userName,
       ),
     );
     if (newReview != null) {
       // Save the review
-      return data.addReview(
-        restaurantId: _restaurant.id,
+      await data.addReview(
+        restaurantId: state.restaurant.id,
         review: newReview,
       );
     }
+    _resBloc.add(GetReviews());
   }
 
-  void _onAddRandomReviewsPressed() async {
+  void _onAddRandomReviewsPressed(RestaurantState state) async {
     // Await adding a random number of random reviews
     final numReviews = Random().nextInt(5) + 5;
     for (var i = 0; i < numReviews; i++) {
       await data.addReview(
-        restaurantId: _restaurant.id,
+        restaurantId: state.restaurant.id,
         review: Review.random(
-          userId: _userId,
-          userName: _userName,
+          userId: state.uid,
+          userName: state.userName,
         ),
       );
     }
+    _resBloc.add(GetReviews());
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Scaffold(
-            body: Builder(
-              builder: (context) => SliverFab(
-                floatingWidget: FloatingActionButton(
-                  tooltip: 'Add a review',
-                  backgroundColor: Colors.amber,
-                  child: Icon(Icons.add),
-                  onPressed: () => _onCreateReviewPressed(context),
-                ),
-                floatingPosition: FloatingPosition(right: 16),
-                expandedHeight: RestaurantAppBar.appBarHeight,
-                slivers: <Widget>[
-                  RestaurantAppBar(
-                    restaurant: _restaurant,
-                    onClosePressed: () => Navigator.pop(context),
-                  ),
-                  _reviews.isNotEmpty
-                      ? SliverPadding(
-                          padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                          sliver: SliverList(
-                            delegate: SliverChildListDelegate(_reviews
-                                .map((Review review) =>
-                                    RestaurantReview(review: review))
-                                .toList()),
-                          ),
-                        )
-                      : SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: EmptyListView(
-                            child: Text('${_restaurant.name} has no reviews.'),
-                            onPressed: _onAddRandomReviewsPressed,
-                          ),
-                        ),
-                ],
+    return BlocBuilder<RestaurantBloc, RestaurantState>(
+      builder: (context, state) {
+        _currentReviewSubscription = state.reviews;
+        return state.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Scaffold(
+          body: Builder(
+            builder: (context) => SliverFab(
+              floatingWidget: FloatingActionButton(
+                tooltip: 'Add a review',
+                backgroundColor: Colors.amber,
+                child: Icon(Icons.add),
+                onPressed: () => _onCreateReviewPressed(context, state),
               ),
+              floatingPosition: FloatingPosition(right: 16),
+              expandedHeight: RestaurantAppBar.appBarHeight,
+              slivers: <Widget>[
+                RestaurantAppBar(
+                  restaurant: state.restaurant,
+                  onClosePressed: () => Navigator.pop(context),
+                ),
+                state.reviews.isNotEmpty
+                    ? SliverPadding(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(state.reviews
+                        .map((Review review) =>
+                        RestaurantReview(review: review))
+                        .toList()),
+                  ),
+                )
+                    : SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: EmptyListView(
+                    child: Text('${state.restaurant.name} has no reviews.'),
+                    onPressed: () => _onAddRandomReviewsPressed(state),
+                  ),
+                ),
+              ],
             ),
-          );
+          ),
+        );
+      }
+    );
   }
 }
 
 class RestaurantPageArguments {
   final String id;
 
-  RestaurantPageArguments({@required this.id});
+  RestaurantPageArguments({this.id});
 }

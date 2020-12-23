@@ -28,6 +28,10 @@ dependencies:
   responsive_grid: ^1.2.1+1
   smooth_star_rating: ^1.1.1
   sliver_fab: ^1.0.0
+  bloc: ^6.1.1
+  flutter_bloc: ^6.1.1
+  equatable: ^1.2.5
+
   flutter:
     sdk: flutter
 
