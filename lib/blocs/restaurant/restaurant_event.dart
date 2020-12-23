@@ -1,7 +1,7 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:friendlyeats/src/model/filter.dart';
+//import 'package:friendlyeats/src/model/filter.dart';
 import 'package:friendlyeats/src/model/restaurant.dart';
 
 abstract class RestaurantEvent extends Equatable {

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:friendlyeats/src/model/filter.dart';
+//import 'package:friendlyeats/src/model/filter.dart';
 import 'package:friendlyeats/src/model/restaurant.dart';
 import 'package:friendlyeats/src/model/review.dart';
 import 'package:meta/meta.dart';
