@@ -65,7 +65,6 @@ Future<Restaurant> getRestaurant(String restaurantId) {
       .get()
       .then((DocumentSnapshot doc) => Restaurant.fromSnapshot(doc));
 }
-
 Future<void> addReview({String restaurantId, Review review}) {
   final restaurant =
   FirebaseFirestore.instance.collection('restaurants').doc(restaurantId);
