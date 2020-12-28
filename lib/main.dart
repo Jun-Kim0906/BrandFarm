@@ -32,6 +32,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   _enablePlatformOverrideForDesktop();
+
   runApp(
     App(),
   );

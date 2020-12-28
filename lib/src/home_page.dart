@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/blocs.dart';
 import 'package:friendlyeats/src/connectivity.dart';
+import 'package:friendlyeats/src/fcm.dart';
 import 'package:friendlyeats/src/geolocator.dart';
 import 'package:friendlyeats/src/widgets/alert_dialog/alert_dialog.dart';
 
@@ -113,6 +114,15 @@ class _HomePageState extends State<HomePage> {
                     icon: Icon(Icons.logout, color: Colors.white,),
                     onPressed: (){
                       showAlertDialog(context);
+                    }
+                ),
+                IconButton(
+                    icon: Icon(Icons.notification_important, color: Colors.white,),
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FCM()),
+                      );
                     }
                 ),
               ],
