@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/blocs.dart';
 import 'package:friendlyeats/src/connectivity.dart';
+import 'package:friendlyeats/src/geolocator.dart';
 import 'package:friendlyeats/src/widgets/alert_dialog/alert_dialog.dart';
 
 import 'restaurant_page.dart';
@@ -90,6 +91,15 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.restaurant),
               title: Text('FriendlyEats'),
               actions: [
+                IconButton(
+                    icon: Icon(Icons.location_on, color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GpsScreen()),
+                      );
+                    }
+                ),
                 IconButton(
                     icon: Icon(Icons.wifi, color: Colors.white,),
                     onPressed: () {
