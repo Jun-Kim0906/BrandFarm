@@ -13,21 +13,21 @@ class DrawApp extends StatefulWidget {
 }
 
 class _DrawAppState extends State<DrawApp> {
-  bool initializeBox = false;
+  bool initializeBox = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeHive().then((result) {
-      setState(() {
-        initializeBox = result;
-      });
-    });
+    // _initializeHive().then((result) {
+    //   setState(() {
+    //     initializeBox = result;
+    //   });
+    // });
   }
 
   Future<bool> _initializeHive() async {
-    await Hive.initFlutter();
     Hive.registerAdapter(ColoredPathAdapter());
+    await Hive.initFlutter();
     await Hive.openBox<ColoredPath>(sketchBox);
     return true;
   }
@@ -40,7 +40,8 @@ class _DrawAppState extends State<DrawApp> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white,),
             onPressed: () async {
-              await Hive.close();
+              // await Hive.close();
+              // await Hive.box(sketchBox).clear();
               Navigator.pop(context);
             },
           ),
@@ -52,6 +53,7 @@ class _DrawAppState extends State<DrawApp> {
   }
 }
 
+@HiveType(typeId: 3)
 class ColoredPath {
   static const colors = [
     Colors.black,
@@ -100,7 +102,7 @@ class ColoredPath {
 
 class ColoredPathAdapter extends TypeAdapter<ColoredPath> {
   @override
-  final typeId = 0;
+  final typeId = 3;
 
   @override
   ColoredPath read(BinaryReader reader) {
@@ -121,6 +123,10 @@ class ColoredPathAdapter extends TypeAdapter<ColoredPath> {
       writer.writeDouble(point.dy);
     }
   }
+
+  // @override
+  // // TODO: implement typeId
+  // int get typeId => 0;
 }
 
 class DrawingScreen extends StatefulWidget {
@@ -130,6 +136,24 @@ class DrawingScreen extends StatefulWidget {
 
 class _DrawingScreenState extends State<DrawingScreen> {
   var selectedColorIndex = 0;
+  bool initializeBox = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeHive().then((result) {
+      setState(() {
+        initializeBox = result;
+      });
+    });
+  }
+
+  Future<bool> _initializeHive() async {
+    Hive.registerAdapter(ColoredPathAdapter());
+    await Hive.initFlutter();
+    await Hive.openBox<ColoredPath>(sketchBox);
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {

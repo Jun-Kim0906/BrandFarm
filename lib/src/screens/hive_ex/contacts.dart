@@ -37,22 +37,22 @@ class ContactMain extends StatefulWidget {
 }
 
 class _ContactMainState extends State<ContactMain> {
-  bool initializeBox = false;
+  bool initializeBox = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeHive().then((result) {
-      setState(() {
-        initializeBox = result;
-      });
-    });
+    // _initializeHive().then((result) {
+    //   setState(() {
+    //     initializeBox = result;
+    //   });
+    // });
   }
 
   Future<bool> _initializeHive() async {
-    await Hive.initFlutter();
     Hive.registerAdapter<Contact>(ContactAdapter());
     Hive.registerAdapter<Relationship>(RelationshipAdapter());
+    await Hive.initFlutter();
     await Hive.openBox<Contact>(contactsBoxName);
     return true;
   }
@@ -66,7 +66,8 @@ class _ContactMainState extends State<ContactMain> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white,),
             onPressed: () async {
-              await Hive.close();
+              // await Hive.close();
+              // await Hive.box(contactsBoxName).clear();
               Navigator.pop(context);
             },
           ),

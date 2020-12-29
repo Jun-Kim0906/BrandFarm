@@ -30,18 +30,18 @@ class FavBooks extends StatefulWidget {
 
 class _FavBooksState extends State<FavBooks> {
   Box<String> favoriteBooksBox;
-  bool initializeBox = false;
+  bool initializeBox = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeHive().then((result) {
-      setState(() {
-        initializeBox = result;
-        favoriteBooksBox = Hive.box(favoritesBox);
-      });
-    });
-    // favoriteBooksBox = Hive.box(favoritesBox);
+    // _initializeHive().then((result) {
+    //   setState(() {
+    //     initializeBox = result;
+    //     favoriteBooksBox = Hive.box(favoritesBox);
+    //   });
+    // });
+    favoriteBooksBox = Hive.box(favoritesBox);
   }
 
   Future<bool> _initializeHive() async {
@@ -75,15 +75,19 @@ class _FavBooksState extends State<FavBooks> {
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white,),
-            onPressed: () async {
-              await Hive.close();
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              // await Hive.close();
+              // await Hive.box(favoritesBox).clear();
               Navigator.pop(context);
             },
           ),
           title: Text("Favorite Books w/ Hive"),
         ),
-        body: initializeBox ? ValueListenableBuilder(
+        body: ValueListenableBuilder(
           valueListenable: favoriteBooksBox.listenable(),
           builder: (context, Box<String> box, _) {
             return ListView.builder(
@@ -99,7 +103,7 @@ class _FavBooksState extends State<FavBooks> {
               },
             );
           },
-        ) : CircularProgressIndicator(),
+        ),
       ),
     );
   }

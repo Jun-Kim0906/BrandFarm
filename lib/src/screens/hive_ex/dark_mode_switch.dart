@@ -11,16 +11,16 @@ class DarkModeSwitch extends StatefulWidget {
   _DarkModeSwitchState createState() => _DarkModeSwitchState();
 }
 class _DarkModeSwitchState extends State<DarkModeSwitch> {
-  bool initializeBox = false;
+  bool initializeBox = true;
 
   @override
   void initState() {
     super.initState();
-    _initializeHive().then((result) {
-      setState(() {
-        initializeBox = result;
-      });
-    });
+    // _initializeHive().then((result) {
+    //   setState(() {
+    //     initializeBox = result;
+    //   });
+    // });
   }
 
   Future<bool> _initializeHive() async {
@@ -43,8 +43,8 @@ class _DarkModeSwitchState extends State<DarkModeSwitch> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.white,),
                 onPressed: () async {
-                  // await box.close();
-                  await Hive.close();
+                  // await Hive.close();
+                  // await box.clear();
                   Navigator.pop(context);
                 },
               ),

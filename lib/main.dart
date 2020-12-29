@@ -8,20 +8,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:friendlyeats/previews_main.dart';
 import 'package:friendlyeats/src/app.dart';
-import 'package:friendlyeats/src/chatting.dart';
-import 'package:friendlyeats/src/connectivity.dart';
-import 'package:friendlyeats/src/fcm.dart';
-import 'package:friendlyeats/src/geolocator.dart';
-import 'package:friendlyeats/src/home_page.dart';
-import 'package:friendlyeats/test.dart';
+import 'package:friendlyeats/src/screens/hive_ex/dark_mode_switch.dart';
+import 'package:friendlyeats/src/screens/hive_ex/fav_books.dart';
+import 'package:friendlyeats/src/screens/hive_ex/sketchpad.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'blocs/authentication_bloc/authentication_bloc.dart';
 import 'blocs/blocObserver.dart';
 import 'src/data_repository/user_repository/user_repository.dart';
+import 'src/screens/hive_ex/contacts.dart';
 import 'src/screens/login/login_screen.dart';
-import 'src/app.dart' deferred as app;
 
 // Sets a platform override for desktop to avoid exceptions. See
 // https://flutter.dev/desktop#target-platform-override for more info.
@@ -37,6 +35,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   _enablePlatformOverrideForDesktop();
+
+  Hive.registerAdapter(ColoredPathAdapter());
+  Hive.registerAdapter<Contact>(ContactAdapter());
+  Hive.registerAdapter<Relationship>(RelationshipAdapter());
+  await Hive.initFlutter();
+  await Hive.openBox<ColoredPath>(sketchBox);
+  await Hive.openBox<Contact>(contactsBoxName);
+  await Hive.openBox<String>(favoritesBox);
+  await Hive.openBox(darkModeBox);
 
   runApp(
     App(),
