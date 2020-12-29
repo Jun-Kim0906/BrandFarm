@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:friendlyeats/src/screens/hive_ex/dark_mode_switch.dart';
+import 'package:friendlyeats/src/screens/hive_ex/fav_books.dart';
 
 class HiveEx extends StatefulWidget{
 
@@ -37,13 +38,31 @@ class _HiveExState extends State<HiveEx> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridTile(
-                  header: Text('header'),
-                  footer: Text('footer'),
+                  header: Text('dark mode'),
+                  footer: Text('switch'),
                   child: InkResponse(
                     onTap: (){
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => DarkModeSwitch()),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Card(
+              color: Colors.blue[100],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridTile(
+                  header: Text('fav books'),
+                  footer: Text('fav books'),
+                  child: InkResponse(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FavBooks()),
                       );
                     },
                   ),
