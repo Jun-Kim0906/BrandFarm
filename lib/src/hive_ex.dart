@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:friendlyeats/src/screens/hive_ex/dark_mode_switch.dart';
 import 'package:friendlyeats/src/screens/hive_ex/fav_books.dart';
+import 'package:friendlyeats/src/screens/hive_ex/sketchpad.dart';
+// import 'package:friendlyeats/src/screens/hive_ex/sketchpad/sketchpad_main.dart';
 
 class HiveEx extends StatefulWidget{
 
@@ -63,6 +65,24 @@ class _HiveExState extends State<HiveEx> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => FavBooks()),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Card(
+              color: Colors.blue[100],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridTile(
+                  header: Text('sketchpad'),
+                  footer: Text('sketchpad'),
+                  child: InkResponse(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DrawApp()),
                       );
                     },
                   ),
