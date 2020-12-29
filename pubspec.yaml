@@ -41,6 +41,9 @@ dependencies:
   connectivity: ^2.0.2
   geolocator: ^5.3.1
   firebase_messaging: ^7.0.3
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
+  path_provider: ^1.6.24
 
   flutter:
     sdk: flutter
@@ -48,6 +51,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  hive_generator: ^0.8.2
+  build_runner: ^1.10.11
 
 flutter:
   uses-material-design: true

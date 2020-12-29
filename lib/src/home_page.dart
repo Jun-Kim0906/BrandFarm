@@ -24,6 +24,7 @@ import 'package:friendlyeats/src/chatting.dart';
 import 'package:friendlyeats/src/connectivity.dart';
 import 'package:friendlyeats/src/fcm.dart';
 import 'package:friendlyeats/src/geolocator.dart';
+import 'package:friendlyeats/src/hive_ex.dart';
 import 'package:friendlyeats/src/widgets/alert_dialog/alert_dialog.dart';
 
 import 'restaurant_page.dart';
@@ -55,6 +56,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Restaurant> _currentSubscription = [];
+
   Future<void> _onAddRandomRestaurantsPressed() async {
     final numReviews = Random().nextInt(10) + 20;
 
@@ -85,89 +87,83 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          _currentSubscription = state.restaurants;
-          return Scaffold(
-            appBar: AppBar(
-              leading: Icon(Icons.restaurant),
-              title: Text('FriendlyEats'),
-              actions: [
-                IconButton(
-                    icon: Icon(Icons.location_on, color: Colors.white,),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GpsScreen()),
-                      );
-                    }
+    return BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+      _currentSubscription = state.restaurants;
+      return Scaffold(
+        appBar: AppBar(
+          leading: Icon(Icons.restaurant),
+          title: Text('FriendlyEats'),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.white,
                 ),
-                IconButton(
-                    icon: Icon(Icons.wifi, color: Colors.white,),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ConnectivityPage()),
-                      );
-                    }
-                ),
-                IconButton(
-                    icon: Icon(Icons.logout, color: Colors.white,),
-                    onPressed: (){
-                      showAlertDialog(context);
-                    }
-                ),
-                IconButton(
-                    icon: Icon(Icons.notification_important, color: Colors.white,),
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => FCM()),
-                      );
-                    }
-                ),
-                IconButton(
-                    icon: Icon(Icons.chat, color: Colors.white,),
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ChatScreen()),
-                      );
-                    }
-                ),
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size(320, 48),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
-                  child: FilterBar(
-                    filter: state.filter,
-                    onPressed: () => _onFilterBarPressed(state),
-                  ),
-                ),
+                onPressed: () {
+                  showAlertDialog(context);
+                }),
+            PopupMenuButton(
+                onSelected: (route) {
+                  print(route);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => route),
+                  );
+                },
+                itemBuilder: (BuildContext context) => [
+                      PopupMenuItem(
+                        value: GpsScreen(),
+                        child: Text('gps'),
+                      ),
+                      PopupMenuItem(
+                        value: ConnectivityPage(),
+                        child: Text('internet'),
+                      ),
+                      PopupMenuItem(
+                        value: FCM(),
+                        child: Text('notify'),
+                      ),
+                      PopupMenuItem(
+                        value: ChatScreen(),
+                        child: Text('chat'),
+                      ),
+                      PopupMenuItem(
+                        value: HiveEx(),
+                        child: Text('Hive'),
+                      ),
+                    ]),
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size(320, 48),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
+              child: FilterBar(
+                filter: state.filter,
+                onPressed: () => _onFilterBarPressed(state),
               ),
             ),
-            body: Center(
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 1280),
-                child: state.isLoading
-                    ? CircularProgressIndicator()
-                    : state.restaurants.isNotEmpty
+          ),
+        ),
+        body: Center(
+          child: Container(
+            constraints: BoxConstraints(maxWidth: 1280),
+            child: state.isLoading
+                ? CircularProgressIndicator()
+                : state.restaurants.isNotEmpty
                     ? RestaurantGrid(
-                    restaurants: state.restaurants,
-                    onRestaurantPressed: (id) {
-                      // TODO: Add deep links on web
-                      Navigator.pushNamed(context, RestaurantPage.route,
-                          arguments: RestaurantPageArguments(id: id));
-                    })
+                        restaurants: state.restaurants,
+                        onRestaurantPressed: (id) {
+                          // TODO: Add deep links on web
+                          Navigator.pushNamed(context, RestaurantPage.route,
+                              arguments: RestaurantPageArguments(id: id));
+                        })
                     : EmptyListView(
-                  child: Text('FriendlyEats has no restaurants yet!'),
-                  onPressed: _onAddRandomRestaurantsPressed,
-                ),
-              ),
-            ),
-          );
-        }
-    );
+                        child: Text('FriendlyEats has no restaurants yet!'),
+                        onPressed: _onAddRandomRestaurantsPressed,
+                      ),
+          ),
+        ),
+      );
+    });
   }
 }

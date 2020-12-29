@@ -10,6 +10,11 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:friendlyeats/previews_main.dart';
 import 'package:friendlyeats/src/app.dart';
+import 'package:friendlyeats/src/chatting.dart';
+import 'package:friendlyeats/src/connectivity.dart';
+import 'package:friendlyeats/src/fcm.dart';
+import 'package:friendlyeats/src/geolocator.dart';
+import 'package:friendlyeats/src/home_page.dart';
 import 'package:friendlyeats/test.dart';
 
 import 'blocs/authentication_bloc/authentication_bloc.dart';
