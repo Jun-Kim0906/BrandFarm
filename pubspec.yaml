@@ -44,6 +44,10 @@ dependencies:
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
   path_provider: ^1.6.24
+  weather_icons: ^2.0.2
+#  cloud_functions: ^0.7.2
+#  device_info: ^1.0.0
+  flutter_local_notifications: ^3.0.2
 
   flutter:
     sdk: flutter

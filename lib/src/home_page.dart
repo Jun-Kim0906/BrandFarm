@@ -20,12 +20,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friendlyeats/blocs/blocs.dart';
+import 'package:friendlyeats/for_testing/local_notification.dart';
 import 'package:friendlyeats/src/chatting.dart';
 import 'package:friendlyeats/src/connectivity.dart';
 import 'package:friendlyeats/src/fcm.dart';
 import 'package:friendlyeats/src/geolocator.dart';
 import 'package:friendlyeats/src/hive_ex.dart';
 import 'package:friendlyeats/src/widgets/alert_dialog/alert_dialog.dart';
+import 'package:friendlyeats/for_testing/weather_icon.dart';
 
 import 'restaurant_page.dart';
 import 'model/data.dart' as data;
@@ -102,6 +104,14 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   showAlertDialog(context);
                 }),
+            IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  showAlertDialog(context);
+                }),
             PopupMenuButton(
                 onSelected: (route) {
                   print(route);
@@ -130,6 +140,14 @@ class _HomePageState extends State<HomePage> {
                       PopupMenuItem(
                         value: HiveEx(),
                         child: Text('Hive'),
+                      ),
+                      PopupMenuItem(
+                        value: Weather_Icons(),
+                        child: Text('weather icons'),
+                      ),
+                      PopupMenuItem(
+                        value: LocalNotification(),
+                        child: Text('local notification'),
                       ),
                     ]),
           ],

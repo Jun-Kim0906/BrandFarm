@@ -56,7 +56,22 @@ class _FCMState extends State<FCM> {
       appBar: AppBar(
         title: Text('Firebase Cloud Messaging'),
       ),
-      body: Container(),
+      body: Container(
+        child: Column(
+          // topic based notification
+          children: [
+            FlatButton(
+              child: Text('I like puppies'),
+              onPressed: () => _fcm.subscribeToTopic('puppies'),
+            ),
+
+            FlatButton(
+              child: Text('I hate puppies'),
+              onPressed: () => _fcm.unsubscribeFromTopic('puppies'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
