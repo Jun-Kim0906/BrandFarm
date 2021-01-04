@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:friendlyeats/for_testing/local_notification.dart';
 import 'package:friendlyeats/for_testing/nested_material_app.dart';
+import 'package:friendlyeats/layout/adaptive.dart';
 
 import 'package:friendlyeats/src/chatting.dart';
 import 'package:friendlyeats/src/connectivity.dart';
@@ -68,8 +69,10 @@ class Test extends StatefulWidget {
   _TestState createState() => _TestState();
 }
 
-class _TestState extends State<Test> {
+class _TestState extends State<Test> with SingleTickerProviderStateMixin {
+  final isWindowMobile = isDisplayMobile;
   ScrollController _hideButtonController;
+  AnimationController _hideAnimationController;
   bool _isVisible;
   final items = List<ListItem>.generate(
     1200,
@@ -83,10 +86,16 @@ class _TestState extends State<Test> {
     super.initState();
     _isVisible = true;
     _hideButtonController = ScrollController();
+    _hideAnimationController = AnimationController(
+      vsync: this,
+      duration: kThemeAnimationDuration,
+      value: 1,
+    );
     _hideButtonController.addListener(() {
       if (_hideButtonController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         if (_isVisible == true) {
+          _hideAnimationController.reverse();
           /* only set when the previous state is false
              * Less widget rebuilds
              */
@@ -99,6 +108,7 @@ class _TestState extends State<Test> {
         if (_hideButtonController.position.userScrollDirection ==
             ScrollDirection.forward) {
           if (_isVisible == false) {
+            _hideAnimationController.forward();
             /* only set when the previous state is false
                * Less widget rebuilds
                */
@@ -184,10 +194,17 @@ class _TestState extends State<Test> {
           },
         ),
       ),
-      floatingActionButton: Visibility(
-        visible: _isVisible,
-        child: fab(context),
+      floatingActionButton: FadeTransition(
+        opacity: _hideAnimationController,
+        child: ScaleTransition(
+          scale: _hideAnimationController,
+          child: fab(context),
+        ),
       ),
+      // Visibility(
+      //   visible: _isVisible,
+      //   child: fab(context),
+      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -298,6 +315,8 @@ class _TestState extends State<Test> {
   @override
   void dispose() {
     _hideButtonController.removeListener(() { });
+    _hideButtonController.dispose();
+    _hideAnimationController.dispose();
     super.dispose();
   }
 }

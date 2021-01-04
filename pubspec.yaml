@@ -48,6 +48,7 @@ dependencies:
 #  cloud_functions: ^0.7.2
 #  device_info: ^1.0.0
   flutter_local_notifications: ^3.0.2
+  adaptive_breakpoints: ^0.0.4
 
   flutter:
     sdk: flutter
