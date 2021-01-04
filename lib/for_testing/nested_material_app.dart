@@ -19,13 +19,13 @@ class _NestedMaterialAppState extends State<NestedMaterialApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         primaryColor: Colors.red,
         accentColor: Colors.blue,
       ),
       home: MaterialApp(
         theme: ThemeData(
-          brightness: Brightness.dark,
+          brightness: Brightness.light,
           primaryColor: Colors.yellow,
           accentColor: Colors.red,
         ),
@@ -38,6 +38,24 @@ class _NestedMaterialAppState extends State<NestedMaterialApp> {
             title: Text('nested materialApp example'),
           ),
           body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [
+                  0.1032,
+                  0.3437,
+                  0.5696,
+                  0.7919,
+                ],
+                colors: [
+                  Color(0xFF82BFED),
+                  Color(0xFF80D0F6),
+                  Color(0xFF7EDFFE),
+                  Color(0xFFA1E9FF),
+                ],
+              ),
+            ),
             child: Center(
               child: Text('color is',
                 style: TextStyle(

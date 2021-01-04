@@ -24,6 +24,7 @@ import 'package:friendlyeats/src/geolocator.dart';
 import 'package:friendlyeats/src/hive_ex.dart';
 
 import 'package:friendlyeats/for_testing/weather_icon.dart';
+import 'package:friendlyeats/src/screens/weather/weather_main.dart';
 
 /// The base class for the different types of items the list can contain.
 abstract class ListItem {
@@ -129,6 +130,10 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
         title: Text('testing menu'),
         actions: [
           IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.refresh),
+          ),
+          IconButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -224,9 +229,16 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
               child: IconButton(
                 icon: Icon(Icons.android_outlined),
                 onPressed: () {
+                },
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.wb_sunny_outlined),
+                onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NestedMaterialApp()),
+                    MaterialPageRoute(builder: (context) => WeatherMain()),
                   );
                 },
               ),
@@ -235,10 +247,6 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
               child: IconButton(
                 icon: Icon(Icons.android_outlined),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NestedMaterialApp()),
-                  );
                 },
               ),
             ),
@@ -246,21 +254,6 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
               child: IconButton(
                 icon: Icon(Icons.android_outlined),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NestedMaterialApp()),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              child: IconButton(
-                icon: Icon(Icons.android_outlined),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NestedMaterialApp()),
-                  );
                 },
               ),
             ),
