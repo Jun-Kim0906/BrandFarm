@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:friendlyeats/src/utils/unicode.dart';
+
+enum weather_circle_type { sunset, prob_of_precip, precip, humidity, wind_info }
 
 class WeatherDetail extends StatefulWidget {
   @override
@@ -7,6 +10,18 @@ class WeatherDetail extends StatefulWidget {
 }
 
 class _WeatherDetailState extends State<WeatherDetail> {
+  String fieldName = '한동이네 딸기 농장';
+  String curr_addr = '경상북도 포항시';
+  String curr_temp = '16' + degrees;
+  String maxTemp = '18';
+  String minTemp = '8';
+  String sunset = '6:31';
+  String prob_of_precip = '10';
+  String precip = '0';
+  String humidity = '29';
+  String wind_dir = '서남서';
+  String wind_speed = '2';
+
   @override
   void initState() {
     super.initState();
@@ -25,14 +40,21 @@ class _WeatherDetailState extends State<WeatherDetail> {
             Navigator.pop(context);
           },
         ),
-        title: Text('한규네 딸기농장'),
+        title: Text(
+          fieldName,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
+          Icon(
+            Icons.location_on,
+            color: Colors.white,
+            size: 14,
           ),
+          Center(
+              child: Text(
+            curr_addr,
+            style: TextStyle(fontSize: 12),
+          )),
         ],
       ),
       body: Stack(
@@ -44,59 +66,74 @@ class _WeatherDetailState extends State<WeatherDetail> {
                 end: Alignment.bottomCenter,
                 stops: [
                   0.1032,
-                  0.3437,
-                  0.5696,
+                  0.3218,
+                  0.4822,
+                  0.6571,
                   0.7919,
                 ],
                 colors: [
                   Color(0xFF82BFED),
                   Color(0xFF80D0F6),
-                  Color(0xFF7EDFFE),
-                  Color(0xFFA1E9FF),
+                  Color(0xFF6BDCFF),
+                  Color(0xFFADEBFF),
+                  Color(0xFF7BE7FF),
                 ],
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
               child: ListView(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                        onPressed: () {
+                          print('refresh button pressed');
+                        },
+                      ),
+                    ],
+                  ),
                   Column(
                     children: [
-                      Text(
-                        '16',
-                        style: TextStyle(fontSize: 64, color: Colors.white),
-                      ),
                       Text(
                         '맑음',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            '2022-04-07',
-                            style: TextStyle(fontSize: 13, color: Colors.white),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                '경상북도 포항시',
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ],
+                      Text(
+                        '16' + degrees,
+                        style: TextStyle(fontSize: 70, color: Colors.white),
+                      ),
+                      Container(
+                        width: 107,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '최고: ' + maxTemp + degrees,
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            Text(
+                              '최저: ' + minTemp + degrees,
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 45,
+                  ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
                         child: Column(
@@ -106,7 +143,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.white),
                             ),
-                            circle('오후 6:31'),
+                            circle(
+                                info: sunset, type: weather_circle_type.sunset),
                           ],
                         ),
                       ),
@@ -118,7 +156,9 @@ class _WeatherDetailState extends State<WeatherDetail> {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.white),
                             ),
-                            circle('10%'),
+                            circle(
+                                info: prob_of_precip,
+                                type: weather_circle_type.prob_of_precip),
                           ],
                         ),
                       ),
@@ -130,7 +170,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.white),
                             ),
-                            circle('0 cm'),
+                            circle(
+                                info: precip, type: weather_circle_type.precip),
                           ],
                         ),
                       ),
@@ -142,7 +183,9 @@ class _WeatherDetailState extends State<WeatherDetail> {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.white),
                             ),
-                            circle('29%'),
+                            circle(
+                                info: humidity,
+                                type: weather_circle_type.humidity),
                           ],
                         ),
                       ),
@@ -154,7 +197,9 @@ class _WeatherDetailState extends State<WeatherDetail> {
                               style:
                                   TextStyle(fontSize: 14, color: Colors.white),
                             ),
-                            circle('2 m/s'),
+                            circle(
+                                info: wind_speed,
+                                type: weather_circle_type.wind_info),
                           ],
                         ),
                       ),
@@ -164,27 +209,66 @@ class _WeatherDetailState extends State<WeatherDetail> {
                     color: Colors.white,
                     thickness: 0.4,
                   ),
-                  // Row(
-                  //   children: [
-                  //     Flexible(
-                  //       child: ListView.builder(
-                  //         scrollDirection: Axis.horizontal,
-                  //         shrinkWrap: true,
-                  //           physics: ClampingScrollPhysics(),
-                  //           itemCount: 24,
-                  //           itemBuilder: (context, index) =>
-                  //             col('오후 9시', 'sunny', '16'),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
+                  Container(
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: 24,
+                            itemBuilder: (context, index) {
+                              if(index == 0) {
+                                return Row(
+                                  children: [
+                                    horizontal_view(time: '지금', icon: 'sunny', temp: '16', now: 1),
+                                    SizedBox(width: 20,),
+                                  ],
+                                );
+                              } else {
+                                return Row(
+                                  children: [
+                                    horizontal_view(time: '오후 9시', icon: 'sunny', temp: '16', now: 0),
+                                    SizedBox(width: 20,),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white,
+                    thickness: 0.4,
+                  ),
+                  Container(
+                    height: 235,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: 24,
+                      itemBuilder: (context, index) {
+                        return vertical_view(date: '화요일', icon: '흐림', info: '18', info2: '6',);
+                      },
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white,
+                    thickness: 0.4,
+                  ),
                 ],
               ),
             ),
           ),
           Container(
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
               color: Color(0x49FFFFFF),
               borderRadius:
@@ -192,8 +276,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
             ),
           ),
           Container(
-            width: 70,
-            height: 70,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
               color: Color(0x30FFFFFF),
               borderRadius:
@@ -205,7 +289,99 @@ class _WeatherDetailState extends State<WeatherDetail> {
     );
   }
 
-  Widget circle(String info) {
+//  enum weather_circle_type {sunset, prob_of_precip, precip, humidity, wind_info}
+
+  Widget circle({String info, weather_circle_type type}) {
+    switch (type) {
+      case weather_circle_type.sunset:
+        {
+          return circleStyle_row(info: '오후 ', info2: info, font_size: 15);
+        }
+        break;
+      case weather_circle_type.prob_of_precip:
+        {
+          return circleStyle_gradient(
+              info: info, info2: '%', font_size: 24, font_size2: 15);
+        }
+        break;
+      case weather_circle_type.precip:
+        {
+          return circleStyle_row(
+              info: info, info2: ' cm', font_size: 24, font_size2: 15);
+        }
+        break;
+      case weather_circle_type.humidity:
+        {
+          return circleStyle_gradient(
+              info: info, info2: '%', font_size: 24, font_size2: 15);
+        }
+        break;
+      case weather_circle_type.wind_info:
+        {
+          return circleStyle_col(
+              info: '서남서', info2: info + 'm/s', font_size: 15);
+        }
+        break;
+      default:
+        {
+          return circleStyle_row(
+              info: '-', info2: '-', font_size: 15, font_size2: 15);
+        }
+        break;
+    }
+  }
+
+  Widget circleStyle_gradient(
+      {String info, String info2, double font_size, double font_size2}) {
+    var top = double.parse(info);
+    var bottom = 100 - top;
+    var top_dec = top / 100;
+    var bottom_dec = bottom / 100;
+    print('$top, $bottom, $top_dec, $bottom_dec');
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+//        color: Color(0x20FFFFFF),
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [top_dec, bottom_dec],
+          colors: [
+            Color(0x20FFFFFF),
+            Color(0xFF75BDFF),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              info,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              info2,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size2,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget circleStyle_row(
+      {String info, String info2, double font_size, double font_size2}) {
     return Container(
       width: 64,
       height: 64,
@@ -213,27 +389,114 @@ class _WeatherDetailState extends State<WeatherDetail> {
         color: Color(0x20FFFFFF),
         shape: BoxShape.circle,
       ),
-      child: FittedBox(
-          child: Text(
-        info,
-        style: TextStyle(color: Colors.white),
-      )),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              info,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              info2,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size2,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget col(String time, String icon, String temp) {
+  Widget circleStyle_col(
+      {String info, String info2, double font_size, double font_size2}) {
     return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: Color(0x20FFFFFF),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              info,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              info2,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: font_size2,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // if now = 1 then now . . . else if now == 0 then not now
+  Widget horizontal_view({String time, String icon, String temp, int now}) {
+    return Container(
+      // width: 25,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            time,
-            style: TextStyle(color: Colors.white),
-          ),
+          now == 0
+              ? Text(time, style: TextStyle(color: Colors.white),)
+              : Text(time, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+          // SizedBox(height: 10,),
           Icon(
             Icons.wb_sunny_outlined,
-            color: Colors.white,
+            color: Colors.yellow,
           ),
-          Text(temp + degrees + 'C', style: TextStyle(color: Colors.white),),
+          // SizedBox(height: 10,),
+          Row(
+            children: [
+              Text(
+                temp,
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                celcius,
+                style: TextStyle(fontSize: 8.0,color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget vertical_view({String date, String icon, String info, String info2}) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(date, style: TextStyle(color: Colors.white),),
+          Icon(Icons.cloud_rounded, color: Colors.grey,),
+          Row(
+            children: [
+              Text(info, style: TextStyle(color: Colors.white),),
+              SizedBox(width: 25,),
+              Text(info2, style: TextStyle(color: Colors.white),),
+            ],
+          ),
         ],
       ),
     );
