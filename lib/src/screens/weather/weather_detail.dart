@@ -84,20 +84,23 @@ class _WeatherDetailState extends State<WeatherDetail> {
               padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
               child: ListView(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.refresh,
-                          color: Colors.white,
-                          size: 25,
+                  Container(
+                    height: 18.64,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            print('refresh button pressed');
+                          },
                         ),
-                        onPressed: () {
-                          print('refresh button pressed');
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Column(
                     children: [
@@ -106,7 +109,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                       Text(
-                        '16' + degrees,
+                        curr_temp,
                         style: TextStyle(fontSize: 70, color: Colors.white),
                       ),
                       Container(
