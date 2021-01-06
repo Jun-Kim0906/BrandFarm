@@ -13,6 +13,8 @@
 // limitations under the License.
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendlyeats/blocs/weather/weather.dart';
 import 'package:friendlyeats/for_testing/local_notification.dart';
 import 'package:friendlyeats/for_testing/nested_material_app.dart';
 import 'package:friendlyeats/layout/adaptive.dart';
@@ -167,10 +169,10 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
                       value: ChatScreen(),
                       child: Text('chat'),
                     ),
-                    PopupMenuItem(
-                      value: HiveEx(),
-                      child: Text('Hive'),
-                    ),
+                    // PopupMenuItem(
+                    //   value: HiveEx(),
+                    //   child: Text('Hive'),
+                    // ),
                     PopupMenuItem(
                       value: Weather_Icons(),
                       child: Text('weather icons'),
@@ -238,7 +240,10 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => WeatherMain()),
+                    MaterialPageRoute(builder: (context) => BlocProvider(
+                      create: (BuildContext context) => WeatherBloc(),
+                      child: WeatherMain(),
+                    ),),
                   );
                 },
               ),

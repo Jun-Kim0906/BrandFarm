@@ -1,6 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friendlyeats/blocs/weather/weather.dart';
 import 'package:friendlyeats/src/screens/weather/weather_detail.dart';
 import 'package:friendlyeats/src/utils/unicode.dart';
 
@@ -20,9 +22,12 @@ class _WeatherMainState extends State<WeatherMain> {
   var height;
   var width;
 
+  WeatherBloc _weatherBloc;
+
   @override
   void initState() {
     super.initState();
+    _weatherBloc = BlocProvider.of<WeatherBloc>(context);
   }
 
   @override
