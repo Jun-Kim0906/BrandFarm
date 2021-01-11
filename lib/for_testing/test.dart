@@ -241,7 +241,7 @@ class _TestState extends State<Test> with SingleTickerProviderStateMixin {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => BlocProvider(
-                      create: (BuildContext context) => WeatherBloc(),
+                      create: (BuildContext context) => WeatherBloc()..add(Wait_Fetch_Weather()),
                       child: WeatherMain(),
                     ),),
                   );

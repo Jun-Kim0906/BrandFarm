@@ -1,48 +1,50 @@
-
-
-import 'package:friendlyeats/src/model/weather.dart';
+import 'package:flutter/cupertino.dart';
+//import 'package:friendlyeats/src/model/filter.dart';
+import 'package:friendlyeats/src/model/restaurant.dart';
+import 'package:friendlyeats/src/model/review.dart';
+import 'package:meta/meta.dart';
 
 class WeatherState {
-  const WeatherState();
+  final bool isLoading;
+  final List weatherInfo;
 
-  @override
-  List<Object> get props => [];
-}
+  WeatherState(
+      {@required this.isLoading,
+        @required this.weatherInfo,
+      });
 
-class InitializeWeatherState extends WeatherState {}
+  factory WeatherState.empty() {
+    return WeatherState(
+      isLoading: false,
+      weatherInfo: [],
+    );
+  }
 
-class WLoading extends WeatherState{}
+  WeatherState copyWith({
+    bool isLoading,
+    List weatherInfo,
+  }) {
+    return WeatherState(
+      isLoading: isLoading ?? this.isLoading,
+      weatherInfo: weatherInfo ?? this.weatherInfo,
+    );
+  }
 
-class WeatherListSet extends WeatherState {
-  final List<Weather> skyList;
-  final List<Weather> tmpList;
-  final List<Weather> humidList;
-  final List<Weather> skyList_short;
-  final List<Weather> tmpList_short;
-  final List<Weather> humidList_short;
-
-  const WeatherListSet(this.skyList, this.tmpList, this.humidList,
-      this.skyList_short, this.tmpList_short, this.humidList_short);
-
-  List<Object> get props =>
-      [
-        skyList,
-        tmpList,
-        humidList,
-        skyList_short,
-        tmpList_short,
-        humidList_short
-      ];
+  WeatherState update({
+    bool isLoading,
+    List weatherInfo,
+  }) {
+    return copyWith(
+      isLoading: isLoading,
+      weatherInfo: weatherInfo,
+    );
+  }
 
   @override
   String toString() {
-    return '''WeatherListSet { 
-    skyList : ${skyList.length}, 
-    tmpList : ${tmpList.length}, 
-    humidList : ${humidList.length}, 
-    skyList_short : ${skyList_short.length}, 
-    tmpList_short : ${tmpList_short.length}, 
-    humidList_short : ${humidList_short.length},
-    }''';
+    return '''WeatherState{
+    isLoading: $isLoading,
+    weatherInfo: ${weatherInfo.length},
+    ''';
   }
 }
