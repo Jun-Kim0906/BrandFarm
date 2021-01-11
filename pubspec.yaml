@@ -49,6 +49,7 @@ dependencies:
 #  device_info: ^1.0.0
   flutter_local_notifications: ^3.0.2
   adaptive_breakpoints: ^0.0.4
+  backdrop: ^0.4.7
 
   flutter:
     sdk: flutter
